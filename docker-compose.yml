@@ -32,7 +32,7 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile.django
-    image: "defectdojo/defectdojo-django:${DJANGO_VERSION:-latest}"
+    image: "defectdojo-django:latest"
     depends_on:
       - mysql
     entrypoint: ['/wait-for-it.sh', 'mysql:3306', '-t', '30', '--', '/entrypoint-uwsgi.sh']
@@ -67,7 +67,7 @@ services:
           source: ./docker/extra_settings
           target: /app/docker/extra_settings
   celeryworker:
-    image: "defectdojo/defectdojo-django:${DJANGO_VERSION:-latest}"
+    image: "defectdojo-django:latest"
     depends_on:
       - mysql
       - rabbitmq
@@ -84,7 +84,7 @@ services:
           target: /app/docker/extra_settings
         - "defectdojo_media:${DD_MEDIA_ROOT:-/app/media}"
   initializer:
-    image: "defectdojo/defectdojo-django:${DJANGO_VERSION:-latest}"
+    image: "defectdojo-django:latest"
     depends_on:
       - mysql
     entrypoint: ['/wait-for-it.sh', 'mysql:3306', '--', '/entrypoint-initializer.sh']

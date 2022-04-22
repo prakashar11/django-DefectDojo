@@ -1985,6 +1985,16 @@ def finding_bulk_update_all(request, pid=None):
                             jira_helper.push_to_jira(finding)
                             success_count += 1
 
+                    # bulk edit related to parent Jira issue
+                    if form.cleaned_data['link_to_jira_parent_issue']:
+                        logger.debug('link_to_jira_parent_issue checked!')
+                        jira_project = jira_helper.get_jira_project(finding)
+                        if finding.has_jira_issue:
+                            logger.debug('findinghas_jira_issue, so update parent issue')
+                            jira = jira_helper.get_jira_connection(finding)
+                            j_issue = jira.issue(finding.jira_issue.jira_id)
+                            jira_helper.add_issue_to_parent(finding, jira_project, j_issue)
+
                 for error_message, error_count in error_counts.items():
                     add_error_message_to_response('%i findings could not be pushed to JIRA: %s' % (error_count, error_message))
 

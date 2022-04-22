@@ -2387,6 +2387,17 @@ class Finding(models.Model):
 
         self.found_by.add(self.test.test_type)
 
+        # save endpoints and endpoint status
+        ep = self.get_endpoints()
+        if ep:
+            logger.debug(f"updating status for endpoints: {ep}")
+            for endpoint in self.endpoints.all():
+                eps, created = Endpoint_Status.objects.get_or_create(
+                    finding=self,
+                    endpoint=endpoint)
+                endpoint.endpoint_status.add(eps)
+                self.endpoint_status.add(eps)
+
         # only perform post processing (in celery task) if needed. this check avoids submitting 1000s of tasks to celery that will do nothing
         if dedupe_option or false_history or issue_updater_option or product_grading_option or push_to_jira:
             finding_helper.post_process_finding_save(self, dedupe_option=dedupe_option, false_history=false_history, rules_option=rules_option, product_grading_option=product_grading_option,
@@ -2954,6 +2965,8 @@ class JIRA_Project(models.Model):
          help_text="Automatically maintain parity with JIRA. Always create and update JIRA tickets for findings in this Product.")
     enable_engagement_epic_mapping = models.BooleanField(default=False,
                                                          blank=True)
+    enable_parent_issue_linking = models.BooleanField(default=False,
+                                                        blank=True)
     push_notes = models.BooleanField(default=False, blank=True)
     product_jira_sla_notification = models.BooleanField(default=False, blank=True, verbose_name="Send SLA notifications as comment?")
     risk_acceptance_expiration_notification = models.BooleanField(default=False, blank=True, verbose_name="Send Risk Acceptance expiration notifications as comment?")
