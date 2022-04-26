@@ -1672,6 +1672,20 @@
     }
   },
   {
+    "pk": 4,
+    "model": "dojo.jira_project",
+    "fields": {
+      "push_notes": true,
+      "engagement": 1,
+      "push_all_issues": false,
+      "component": "",
+      "enable_engagement_epic_mapping": false,
+      "enable_parent_issue_linking": true,
+      "jira_instance": 2,
+      "project_key": "NTEST"
+    }
+  },
+  {
     "pk": 1,
     "model": "dojo.note_type",
     "fields": {
